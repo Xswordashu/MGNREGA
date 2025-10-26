@@ -1,22 +1,23 @@
-import { Search, MapPin, ChevronRight } from 'lucide-react';
+import { Search,  ChevronRight, Map } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import {  useMemo, useState } from 'react';
-import { states } from '@/mockdata/state';
 import { useDebounce } from '@/hooks/debounce';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
+import { districts } from '@/mockdata/district';
 
 
 
-export function StateSelection() {
+export default function DistrictSelection() {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams(); 
+  const stateName = searchParams.get("state_name") ?? "";
   const [searchTerm, setSearchTerm] = useState('');
-
-  // Mock districts for demonstration
+  const stateDistricts = districts[stateName as keyof typeof districts] || [];
   const debouncedSearchTerm = useDebounce(searchTerm, 500);
-  const filteredStates = useMemo(()=>{
-    return states.filter(({ en }) =>
-      en.toLowerCase().includes(debouncedSearchTerm.toLowerCase())
+  const filteredDistricts = useMemo(()=>{
+    return stateDistricts.filter((district) =>
+      district.toLowerCase().includes(debouncedSearchTerm.toLowerCase())
     );
   }, [debouncedSearchTerm])
 
@@ -24,11 +25,11 @@ export function StateSelection() {
     <div className="container max-w-4xl mx-auto px-4 py-8">
       {/* Header with Icon */}
       <div className="text-center mb-8">
-        <div className="inline-flex items-center justify-center w-20 h-20 bg-green-600 rounded-full mb-4">
-          <MapPin className="w-10 h-10 text-white" />
+        <div className="inline-flex items-center justify-center w-20 h-20 bg-purple-600 rounded-full mb-4">
+          <Map className="w-10 h-10 text-white" />
         </div>
         <h1 className="text-4xl mb-2">मनरेगा / MGNREGA</h1>
-        <p className="text-xl text-muted-foreground">अपना राज्य चुनें / Select Your State</p>
+        <p className="text-xl text-muted-foreground">अपना जिला चुनें / Select Your District</p>
       </div>
 
       {/* Search Bar */}
@@ -36,7 +37,7 @@ export function StateSelection() {
         <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-muted-foreground w-6 h-6" />
         <Input
           type="text"
-          placeholder="राज्य खोजें / Search state..."
+          placeholder="जिला खोजें / Search district..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
           className="pl-14 h-16 border-2"
@@ -46,20 +47,21 @@ export function StateSelection() {
 
       {/* State Cards Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {filteredStates.map((state) => (
+        {filteredDistricts.map((district) => (
           <Card
-            key={state.en}
-            className="p-6 hover:shadow-lg transition-all cursor-pointer border-2 hover:border-green-500 cursor-pointer"
-            onClick={() => navigate(`/districts?state_name=${state.en}`)}
+            key={district}
+            className="p-6 hover:shadow-lg transition-all cursor-pointer border-2 hover:border-purple-500"
+            onClick={()=> navigate(`/view?state_name=${stateName}&district_name=${district}`)
+            }
           >
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-4">
-                <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
-                  <MapPin className="w-6 h-6 text-green-600" />
+                  <div className="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center">
+                  <Map className="w-6 h-6 text-purple-600" />
                 </div>
                 <div>
-                  <h3 className="text-xl">{state.en}</h3>
-                  <p className="text-sm text-muted-foreground">{state.hi} / {state.en}</p>
+                  <h3 className="text-xl">{district}</h3>
+                  <p className="text-sm text-muted-foreground"> {stateName}</p>
                 </div>
               </div>
               <ChevronRight className="w-6 h-6 text-muted-foreground" />
@@ -77,9 +79,9 @@ export function StateSelection() {
           <div>
             <h4 className="mb-1">जानकारी / Information</h4>
             <p className="text-sm text-muted-foreground">
-              अपने राज्य का चयन करें और मनरेगा कार्यक्रम का प्रदर्शन देखें
+              अपने जिले का चयन करें और मनरेगा कार्यक्रम का प्रदर्शन देखें
               <br />
-              Select your state to view MGNREGA program performance
+              Select your district to view MGNREGA program performance
             </p>
           </div>
         </div>

@@ -3,7 +3,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useDebounce } from "./debounce";
 import useCreateQuery from "./createQuery";
-import usePagination from "./pagination";
+
 
 export interface Option {
   label: string;
@@ -82,7 +82,7 @@ export default function useDataTableFilter<TData>({ filterFields = [] }: UseData
       setMounted(true);
       return;
     }
-   console.log("*******************")
+   
     const newParams: Record<string, string | number | null> = {page: 1};
 
     for (const filter of debouncedSearchableFilters) {
@@ -121,7 +121,7 @@ export default function useDataTableFilter<TData>({ filterFields = [] }: UseData
       replace: true,
     });
     
-    // setPagination((prev) => ({ ...prev, pageIndex: 0 }));
+    
     
   }, [
     JSON.stringify(debouncedSearchableFilters),

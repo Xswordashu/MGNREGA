@@ -9,7 +9,7 @@ import { Card } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import type { MgnregaDetails } from '@/redux/services/product';
+import { useViewProductByIdQuery, type MgnregaDetails } from '@/redux/services/product';
 import { 
 //   BarChart, 
 //   Bar, 
@@ -24,14 +24,16 @@ import {
   Pie,
   Cell
 } from 'recharts';
+import { useNavigate, useParams } from 'react-router-dom';
 
 interface DetailViewProps {
   record: MgnregaDetails;
   
-  onBack: () => void;
+
 }
 
-export default function DetailView({ record, onBack }: DetailViewProps) {
+function DetailView({ record }: DetailViewProps) {
+  const navigate = useNavigate();
   // Mock data for charts
 //   const expenditureTrendData = [
 //     { month: 'Jul', exp: 1420 },
@@ -67,7 +69,7 @@ export default function DetailView({ record, onBack }: DetailViewProps) {
         <div className="mb-6">
           <Button 
             variant="ghost" 
-            onClick={onBack}
+            onClick={()=>navigate(`/view`)}
             className="mb-4 h-12 px-4"
           >
             <ArrowLeft className="w-5 h-5 mr-2" />
@@ -839,4 +841,24 @@ export default function DetailView({ record, onBack }: DetailViewProps) {
       </div>
     </div>
   );
+}
+
+export default function ViewAllMgnregaDetails() {
+  
+  const { id } = useParams();
+  const { data, isLoading } = useViewProductByIdQuery(id!, {
+    skip: !id,
+    selectFromResult: ({ data, isLoading }) => ({
+      data: data?.record,
+      isLoading: isLoading,
+    }),
+  });
+ 
+  if (isLoading) {
+    return <div>Loading......</div>;
+  }
+ 
+  if (data) {
+    return <DetailView record={data} />;
+  }
 }

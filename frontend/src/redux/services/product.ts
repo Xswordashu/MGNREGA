@@ -2,6 +2,7 @@ import { apiSlice } from ".";
 
 
 export interface MgnregaDetails { 
+  _id: string;
   fin_year: string;
   month: string;
   state_code: string;
@@ -60,6 +61,11 @@ export interface ICommonSearchQuery {
     month?: string;
     fin_year?: string;
 }
+
+export interface IViewMgnregaRecordById {
+  record: MgnregaDetails;
+}
+
 const productApi = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
      viewAllProducts: builder.query<ViewAllProductResponse, ICommonSearchQuery>({
@@ -70,6 +76,16 @@ const productApi = apiSlice.injectEndpoints({
         const finYearFilter = fin_year ? `&fin_year=${fin_year}` : "";
 
         const url = `/api/records?pageSize=${limit}&page=${page}${stateFilter}${districtFilter}${monthFilter}${finYearFilter}`;
+        return {
+          url: url,
+          method: "GET",
+        };
+      },
+    }),
+
+    viewProductById: builder.query<IViewMgnregaRecordById, string>({
+      query: (id) => {
+        const url = `/api/record/${id}`;
         return {
           url: url,
           method: "GET",
@@ -93,7 +109,7 @@ const productApi = apiSlice.injectEndpoints({
   }),
 });
 
-export const { useViewAllProductsQuery } =
+export const { useViewAllProductsQuery, useViewProductByIdQuery } =
   productApi;
 
 export default productApi;

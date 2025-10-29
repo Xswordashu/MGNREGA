@@ -1,7 +1,7 @@
-import { Button } from "@/components/ui/button"
 import type { MgnregaDetails } from "@/redux/services/product"
 import type { ColumnDef } from "@tanstack/react-table"
 import { Briefcase, Calendar, Eye, IndianRupee, Users } from "lucide-react"
+import { Link } from "react-router-dom"
 
 
  
@@ -150,16 +150,15 @@ export const personColumn: ColumnDef<MgnregaDetails>[] = [
                   <span className="text-xs text-muted-foreground">Action</span>
       </>
     ),
-    cell: () => {
+    cell: ({ row }) => {
       return (
-         <Button 
-                      size="sm" 
-                      className="bg-green-600 hover:bg-green-700"
-                      
-                    >
-                      <Eye className="w-4 h-4 mr-1" />
-                      <span className="text-sm">देखें / View</span>
-                    </Button>
+          <Link
+          to={`/details/${row.original._id}`}
+          className="bg-green-600 hover:bg-green-700 flex items-center gap-2.5 px-2 py-2 max-w-[120px] rounded-2xl text-white"
+        >
+          <Eye className="w-4 h-4 mr-1" />
+          <span className="text-sm">देखें / View</span>
+        </Link>
       )
     }
   }
